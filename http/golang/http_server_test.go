@@ -1,52 +1,29 @@
-package users
+package main
 
 import (
 	"net/http"
-	"strconv"
-
-	"github.com/google/martian/log"
+	"net/http/httptest"
+	"testing"
 )
 
-var userList = []string{"Вася", "Петя", "Дмитрий", "Тимур", "Евгений"}
+func TestGetUserOfIdOK(t *testing.T) {
+	req := httptest.NewRequest("GET", "/users?userid=0", nil)
+	responseRecorder := httptest.NewRecorder()
+	handler := http.HandlerFunc(userGetHandler)
+	handler.ServeHTTP(responseRecorder, req)
 
-func userGetHandler(w http.ResponseWriter, req *http.Request) {
-
-	userIdStr := req.URL.Query().Get("userid")
-
-	if userIdStr == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		http.Error(w, "Request error not changed userid", http.StatusBadRequest)
-		return
+	if status := responseRecorder.Code; status != http.StatusOK {
+		t.Errorf("Статус ответа сервера %d != 200", status)
 	}
-
-	userId, err := strconv.Atoi(userIdStr)
-
-	if err != nil {
-		log.Errorf("%#v", err)
-		return
-	}
-
-	if userId < 0 || userId >= len(userList) {
-		w.WriteHeader(http.StatusBadRequest)
-		http.Error(w, "userid bigest", http.StatusBadRequest)
-		return
-	}
-	selectedUser := userList[userId]
-
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(selectedUser))
-
 }
 
-func main() {
+func TestGetUserMoreQuantity(t *testing.T) {
+	req := httptest.NewRequest("GET", "/users?userid=10", nil)
+	responseRecorder := httptest.NewRecorder()
+	handler := http.HandlerFunc(userGetHandler)
+	handler.ServeHTTP(responseRecorder, req)
 
-	mux := http.NewServeMux()
-	mux.HandleFunc("/user", userGetHandler)
-
-	err := http.ListenAndServe(":8080", mux)
-
-	if err != nil {
-		panic(err)
+	if status := responseRecorder.Code; status != http.StatusBadRequest {
+		t.Errorf("Ответ сервера на запрос пользователя с идентификатором выходящем за пределы списка завершился с http status code =%d отличным от 400", status)
 	}
-
 }
