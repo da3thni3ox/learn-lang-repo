@@ -1,2 +1,2 @@
 # Learn
-[Указатели](./pointers/README.md)
+- [Указатели](./pointers/README.md)
