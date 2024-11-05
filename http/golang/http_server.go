@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -38,11 +39,21 @@ func userGetHandler(w http.ResponseWriter, req *http.Request) {
 
 }
 
+func getAllUser(w http.ResponseWriter, req *http.Request) {
+
+	answer := ""
+	for id, userName := range userList {
+		answer += fmt.Sprintf("id=%d, имя=%s \n", id, userName)
+	}
+
+	w.Write([]byte(answer))
+}
+
 func main() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/user", userGetHandler)
-
+	mux.HandleFunc("/getalluser", getAllUser)
 	err := http.ListenAndServe(":8080", mux)
 
 	if err != nil {
