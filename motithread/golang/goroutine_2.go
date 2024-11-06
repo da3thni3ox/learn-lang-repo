@@ -16,17 +16,18 @@ import (
 
 var wg sync.WaitGroup
 
-func sum(start, end int) {
+func sum(start, end int, res chan int) {
 	var sum int
 	for i := start; i <= end; i++ {
 		sum += i
 	}
 	defer wg.Done()
 
-	fmt.Printf("Сумма чисел %d и %d = %d\n", start, end, sum)
+	res <- sum
 }
 
 func main() {
+	res := make(chan int, 3)
 
 	start := 0
 	end := 0
@@ -41,11 +42,19 @@ func main() {
 		case 3:
 			start, end = 21, 30
 		}
-		go sum(start, end)
+		go sum(start, end, res)
 
 	}
 
 	wg.Wait()
+	close(res)
+
+	var totalSum int
+	for sum := range res {
+		totalSum += sum
+	}
+
+	fmt.Println(totalSum)
 }
 
 // Первая горутина считает сумму чисел от 1 до 10
