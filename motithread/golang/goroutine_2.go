@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"sync"
 )
 
@@ -15,19 +16,37 @@ import (
 
 var wg sync.WaitGroup
 
-func sum(group int) {
+func sum(start, end int) {
 	var sum int
-	for i := 1; i <= 10; i++ {
+	for i := start; i <= end; i++ {
 		sum += i
 	}
 	defer wg.Done()
+
+	fmt.Println(sum)
 }
 
 func main() {
 
+	start := 0
+	end := 0
 	for i := 1; i <= 3; i++ {
 		wg.Add(1)
-		go sum(i)
+		if i == 1 {
+			start = 1
+			end = 10
+		}
+
+		if i == 2 {
+			start = 11
+			end = 20
+		}
+
+		if i == 3 {
+			start = 21
+			end = 30
+		}
+		go sum(start, end)
 
 	}
 
