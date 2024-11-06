@@ -23,7 +23,7 @@ func sum(start, end int) {
 	}
 	defer wg.Done()
 
-	fmt.Println(sum)
+	fmt.Printf("Сумма чисел %d и %d = %d\n", start, end, sum)
 }
 
 func main() {
@@ -32,19 +32,14 @@ func main() {
 	end := 0
 	for i := 1; i <= 3; i++ {
 		wg.Add(1)
-		if i == 1 {
-			start = 1
-			end = 10
-		}
 
-		if i == 2 {
-			start = 11
-			end = 20
-		}
-
-		if i == 3 {
-			start = 21
-			end = 30
+		switch i {
+		case 1:
+			start, end = 1, 10
+		case 2:
+			start, end = 11, 20
+		case 3:
+			start, end = 21, 30
 		}
 		go sum(start, end)
 
