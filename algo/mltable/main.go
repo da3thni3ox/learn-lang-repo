@@ -19,3 +19,6 @@ func main() {
 
 	fmt.Println(mltable)
 }
+
+//https://www.codewars.com/kata/534d2f5b5371ecf8d2000a08/train/go
+//Multiplication table
